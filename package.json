@@ -1,0 +1,50 @@
+{
+  "name": "@nnilky/solid-hooks",
+  "private": false,
+  "version": "0.1.1",
+  "author": "Ben Brady",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ben-Brady/solid-hooks.git"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "default": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./index.js": {
+      "default": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "keywords": [
+    "solid",
+    "threads",
+    "utility"
+  ],
+  "files": [
+    "LICENSE",
+    "README.md",
+    "./dist/*.d.ts",
+    "./dist/*.js.map",
+    "./dist/*.js"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "publish": "npm publish --access=public"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3"
+  },
+  "peerDependencies": {
+    "solid-js": ">1.9.0"
+  }
+}
