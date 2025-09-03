@@ -1,4 +1,4 @@
-import { onCleanup } from "solid-js";
+import { onCleanup, onMount } from "solid-js";
 
 /**
  * setInterval with cleanup
@@ -9,10 +9,10 @@ import { onCleanup } from "solid-js";
  * })
  * ```
  */
-export const useInterval = (ms: number, callback: () => void): number => {
-    let timer = setInterval(callback, ms);
+export const useInterval = (ms: number, callback: () => void) => {
+    let timer: number | undefined;
+    onMount(() => (timer = setInterval(callback, ms)));
     onCleanup(() => clearInterval(timer));
-    return timer;
 };
 
 /**
@@ -25,9 +25,9 @@ export const useInterval = (ms: number, callback: () => void): number => {
  * })
  * ```
  */
-export const useDeltaInterval = (ms: number, callback: (deltaTime: number) => void): number => {
+export const useDeltaInterval = (ms: number, callback: (deltaTime: number) => void) => {
     let lastFrame = Date.now();
-    return useDeltaInterval(ms, () => {
+    useDeltaInterval(ms, () => {
         let timestamp = Date.now();
         callback((timestamp - lastFrame) / 1000);
         lastFrame = timestamp;
@@ -44,15 +44,16 @@ export const useDeltaInterval = (ms: number, callback: (deltaTime: number) => vo
  * })
  * ```
  */
-export const useFrameInterval = (callback: (timestamp: number) => void): number => {
+export const useFrameInterval = (callback: (timestamp: number) => void) => {
     let frameId: number;
     const tick = (timestamp: number) => {
         callback(timestamp);
         frameId = requestAnimationFrame(tick);
     };
-    frameId = requestAnimationFrame(tick);
+    onMount(() => {
+        frameId = requestAnimationFrame(tick);
+    });
     onCleanup(() => cancelAnimationFrame(frameId));
-    return frameId;
 };
 
 /**
@@ -65,11 +66,9 @@ export const useFrameInterval = (callback: (timestamp: number) => void): number 
  * })
  * ```
  */
-export const useDeltaFrameInterval = (
-    callback: (deltaTime: number, timestamp: number) => void,
-): number => {
+export const useDeltaFrameInterval = (callback: (deltaTime: number, timestamp: number) => void) => {
     let lastTimestamp = performance.now();
-    return useFrameInterval((timestamp) => {
+    useFrameInterval((timestamp) => {
         let deltaTime = (timestamp - lastTimestamp) / 1000;
         callback(deltaTime, timestamp);
         lastTimestamp = timestamp;
