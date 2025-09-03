@@ -27,7 +27,9 @@ export const createStoredSignal = <T>(key: string, defaultValue: T): [Accessor<T
         //@ts-ignore
         const nextValue = typeof newValue === "function" ? newValue(value()) : newValue;
         _setValue(nextValue);
-        localStorage.setItem(key, JSON.stringify(nextValue));
+        try {
+            localStorage.setItem(key, JSON.stringify(nextValue));
+        } catch {}
     };
 
     return [value, setValue] as const;
