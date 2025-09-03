@@ -1,7 +1,7 @@
 {
   "name": "@nnilky/solid-hooks",
   "private": false,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": "Ben Brady",
   "license": "MIT",
   "repository": {
@@ -35,7 +35,8 @@
     "README.md",
     "./dist/*.d.ts",
     "./dist/*.js.map",
-    "./dist/*.js"
+    "./dist/*.js",
+    "./dist/*.jsx"
   ],
   "scripts": {
     "build": "tsc",
