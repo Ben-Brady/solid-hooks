@@ -1,8 +1,8 @@
-export { useAbortSignal } from "./useAbortSignal";
-export { createStoredSignal, createCustomSignalStore } from "./createStoreSignal";
+export { useAbortSignal } from "./useAbortSignal.js";
+export { createStoredSignal, createCustomSignalStore } from "./createStoreSignal.js";
 export {
     useDeltaFrameInterval,
     useDeltaInterval,
     useFrameInterval,
     useInterval,
-} from "./useInterval";
+} from "./useInterval.js";
