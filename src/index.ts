@@ -1,4 +1,5 @@
 export { useAbortSignal } from "./useAbortSignal.js";
+export { useIsClient } from "./useIsClient.js";
 export { createStoredSignal, createCustomSignalStore } from "./createStoreSignal.js";
 export {
     useDeltaFrameInterval,
