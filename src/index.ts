@@ -1,3 +1,4 @@
+export { useViewportSize } from "./useViewport.js";
 export { useAbortSignal } from "./useAbortSignal.js";
 export { useIsClient } from "./useIsClient.js";
 export { createStoredSignal, createCustomSignalStore } from "./createStoreSignal.js";
