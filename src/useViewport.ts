@@ -1,5 +1,5 @@
 import { batch, createEffect, createSignal, type Accessor } from "solid-js";
-import { useAbortSignal } from "./useAbortSignal";
+import { useAbortSignal } from "./useAbortSignal.js";
 
 export const useViewportSize = (): {
     width: Accessor<number | undefined>;
