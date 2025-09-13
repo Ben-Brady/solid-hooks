@@ -23,5 +23,4 @@ export const createDeferedCallback = (ms: number | undefined) => {
 };
 
 export const isClient = typeof window < "u";
-console.log({ isClient });
 export const voidFunc: (...args: any[]) => void = () => {};
