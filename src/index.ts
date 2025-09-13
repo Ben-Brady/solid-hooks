@@ -1,5 +1,6 @@
 export { useViewportSize, useViewportHeight, useViewportWidth } from "./useViewport.js";
 export { useAbortSignal } from "./useAbortSignal.js";
+export { onClient } from "./onClient.js";
 export { useIsClient } from "./useIsClient.js";
 export {
     createStoredSignal,
@@ -17,4 +18,3 @@ export {
     useFrameInterval,
     useInterval,
 } from "./useInterval.js";
-export { onClient } from "./onClient.js";
