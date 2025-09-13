@@ -1,7 +1,7 @@
 import { onMount } from "solid-js";
 
-const isClient = typeof window !== "undefined";
 export const onClient = (callback: () => void) => {
+    const isClient = typeof window !== "undefined";
     if (isClient) {
         callback();
     } else {
