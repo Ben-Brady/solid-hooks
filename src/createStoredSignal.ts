@@ -15,16 +15,16 @@ export const createStoredSignal = <T>(
     let storedValue: T | undefined;
 
     eatErrors(() => {
-        const storedString = localStorage.getItem(key);
+        let storedString = localStorage.getItem(key);
         if (storedString) {
             storedValue = JSON.parse(storedString);
         }
     });
-    const [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
+    let [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
 
-    const setter: Setter<T> = (...args) => {
+    let setter: Setter<T> = (...args) => {
         //@ts-ignore
-        const newValue = setValue(...args);
+        let newValue = setValue(...args);
         eatErrors(() => localStorage.setItem(key, JSON.stringify(newValue)));
         return newValue;
     };
@@ -49,17 +49,17 @@ export const createDeferedStoredSignal = <T>(
     let storedValue: T | undefined;
 
     eatErrors(() => {
-        const storedString = localStorage.getItem(key);
+        let storedString = localStorage.getItem(key);
         if (storedString) {
             storedValue = JSON.parse(storedString);
         }
     });
-    const [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
+    let [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
 
-    const defered = createDeferedCallback(ms);
-    const setter: Setter<T> = (...args) => {
+    let defered = createDeferedCallback(ms);
+    let setter: Setter<T> = (...args) => {
         //@ts-ignore
-        const newValue = setValue(...args);
+        let newValue = setValue(...args);
         defered(() => eatErrors(() => localStorage.setItem(key, JSON.stringify(newValue))));
         return newValue;
     };
@@ -86,25 +86,25 @@ export const createCustomStoredSignal = (options: {
     serialise?: (value: any) => string;
     deserialise?: (value: string) => any;
 }): (<T>(key: string, defaultValue: T) => [state: Accessor<T>, setState: Setter<T>]) => {
-    const storage = options.storage ?? localStorage;
-    const serialise = options.serialise ?? JSON.stringify;
-    const deserialise = options.deserialise ?? JSON.parse;
+    let storage = options.storage ?? localStorage;
+    let serialise = options.serialise ?? JSON.stringify;
+    let deserialise = options.deserialise ?? JSON.parse;
 
     return <T extends any>(key: string, defaultValue: T) => {
         let storedValue: T | undefined;
 
         eatErrors(() => {
-            const storedString = storage.getItem(key);
+            let storedString = storage.getItem(key);
             if (storedString) {
                 storedValue = deserialise(storedString);
             }
         });
-        const [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
+        let [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
 
-        const defered = createDeferedCallback(options.ratelimit);
-        const setter: Setter<T> = (...args) => {
+        let defered = createDeferedCallback(options.ratelimit);
+        let setter: Setter<T> = (...args) => {
             //@ts-ignore
-            const newValue = setValue(...args);
+            let newValue = setValue(...args);
             defered(() => eatErrors(() => storage.setItem(key, serialise(newValue))));
             return newValue;
         };

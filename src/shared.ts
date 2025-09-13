@@ -1,4 +1,4 @@
-export const eatErrors = (callback: () => void) => {
+export let eatErrors = (callback: () => void) => {
     try {
         callback();
     } catch (e) {
@@ -6,7 +6,7 @@ export const eatErrors = (callback: () => void) => {
     }
 };
 
-export const createDeferedCallback = (ms: number | undefined) => {
+export let createDeferedCallback = (ms: number | undefined) => {
     let timeout: number | undefined;
     let action: (() => void) | undefined;
 

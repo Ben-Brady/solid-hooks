@@ -1,22 +1,22 @@
 import { createStore, unwrap, type SetStoreFunction, type Store } from "solid-js/store";
 import { createDeferedCallback, eatErrors } from "./shared.js";
 
-export function createSavedStore<T extends object = {}>(
+export const createSavedStore = <T extends object = {}>(
     key: string,
     defaultValue: T,
-): [store: Store<T>, setStore: SetStoreFunction<T>] {
+): [store: Store<T>, setStore: SetStoreFunction<T>] => {
     let storedValue: T | undefined;
     eatErrors(() => {
-        const storedString = localStorage.getItem(key);
+        let storedString = localStorage.getItem(key);
         if (storedString) {
             storedValue = JSON.parse(storedString);
         }
     });
 
-    const initial = storedValue ?? defaultValue;
-    const [store, setStore] = createStore<T>(initial, { name: key });
+    let initial = storedValue ?? defaultValue;
+    let [store, setStore] = createStore<T>(initial, { name: key });
 
-    const setter: SetStoreFunction<T> = (...args: any[]) => {
+    let setter: SetStoreFunction<T> = (...args: any[]) => {
         //@ts-expect-error, no types to avoid recursive type
         setStore(...args);
 
@@ -26,26 +26,26 @@ export function createSavedStore<T extends object = {}>(
     };
 
     return [store, setter] as const;
-}
+};
 
-export function createDeferedSavedStore<T extends object = {}>(
+export const createDeferedSavedStore = <T extends object = {}>(
     key: string,
     defaultValue: T,
     ms: number = 200,
-): [store: Store<T>, setStore: SetStoreFunction<T>] {
+): [store: Store<T>, setStore: SetStoreFunction<T>] => {
     let storedValue: T | undefined;
     eatErrors(() => {
-        const storedString = localStorage.getItem(key);
+        let storedString = localStorage.getItem(key);
         if (storedString) {
             storedValue = JSON.parse(storedString);
         }
     });
 
-    const initial = storedValue ?? defaultValue;
-    const [store, setStore] = createStore<T>(initial, { name: key });
+    let initial = storedValue ?? defaultValue;
+    let [store, setStore] = createStore<T>(initial, { name: key });
 
-    const defered = createDeferedCallback(ms);
-    const setter: SetStoreFunction<T> = (...args: any[]) => {
+    let defered = createDeferedCallback(ms);
+    let setter: SetStoreFunction<T> = (...args: any[]) => {
         //@ts-expect-error, no types to avoid recursive type
         setStore(...args);
 
@@ -57,7 +57,7 @@ export function createDeferedSavedStore<T extends object = {}>(
     };
 
     return [store, setter] as const;
-}
+};
 
 /**
  * let's you customise createStoredSignal to support using different types of storage and different serialisation methods
@@ -81,25 +81,25 @@ export const createCustomStoredStore = (options: {
     key: string,
     defaultValue: T,
 ) => [store: Store<T>, setStore: SetStoreFunction<T>]) => {
-    const storage = options.storage ?? localStorage;
-    const serialise = options.serialise ?? JSON.stringify;
-    const deserialise = options.deserialise ?? JSON.parse;
+    let storage = options.storage ?? localStorage;
+    let serialise = options.serialise ?? JSON.stringify;
+    let deserialise = options.deserialise ?? JSON.parse;
 
     return <T extends object = {}>(key: string, defaultValue: T) => {
         let storedValue: T | undefined;
 
         eatErrors(() => {
-            const storedString = storage.getItem(key);
+            let storedString = storage.getItem(key);
             if (storedString) {
                 storedValue = deserialise(storedString);
             }
         });
 
-        const initial = storedValue ?? defaultValue;
-        const [store, setStore] = createStore<T>(initial, { name: key });
+        let initial = storedValue ?? defaultValue;
+        let [store, setStore] = createStore<T>(initial, { name: key });
+        let defered = createDeferedCallback(options.ratelimit);
 
-        const defered = createDeferedCallback(options.ratelimit);
-        const setter: SetStoreFunction<T> = (...args: any[]) => {
+        let setter: SetStoreFunction<T> = (...args: any[]) => {
             //@ts-expect-error, no types to avoid recursive type
             setStore(...args);
 

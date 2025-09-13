@@ -3,11 +3,11 @@ import { useAbortSignal } from "./useAbortSignal.js";
 import { onClient } from "./onClient.js";
 
 export const useViewportSize = (): [Accessor<number | undefined>, Accessor<number | undefined>] => {
-    const [width, setWidth] = createSignal<number | undefined>();
-    const [height, setHeight] = createSignal<number | undefined>();
-    const signal = useAbortSignal();
+    let [width, setWidth] = createSignal<number | undefined>();
+    let [height, setHeight] = createSignal<number | undefined>();
+    let signal = useAbortSignal();
 
-    const update = () =>
+    let update = () =>
         batch(() => {
             setHeight(document.body.clientHeight);
             setWidth(document.body.clientWidth);
@@ -22,10 +22,10 @@ export const useViewportSize = (): [Accessor<number | undefined>, Accessor<numbe
 };
 
 export const useViewportWidth = (): Accessor<number | undefined> => {
-    const [width, setWidth] = createSignal<number | undefined>();
-    const signal = useAbortSignal();
+    let [width, setWidth] = createSignal<number | undefined>();
+    let signal = useAbortSignal();
 
-    const update = () => setWidth(document.body.clientWidth);
+    let update = () => setWidth(document.body.clientWidth);
 
     onClient(() => {
         update();
@@ -36,10 +36,10 @@ export const useViewportWidth = (): Accessor<number | undefined> => {
 };
 
 export const useViewportHeight = (): Accessor<number | undefined> => {
-    const [height, setHeight] = createSignal<number | undefined>();
-    const signal = useAbortSignal();
+    let [height, setHeight] = createSignal<number | undefined>();
+    let signal = useAbortSignal();
 
-    const update = () => setHeight(document.body.clientHeight);
+    let update = () => setHeight(document.body.clientHeight);
 
     onClient(() => {
         update();
