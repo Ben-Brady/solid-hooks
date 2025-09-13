@@ -1,4 +1,5 @@
-import { onCleanup, onMount } from "solid-js";
+import { onCleanup } from "solid-js";
+import { onClient } from "./onClient.js";
 
 /**
  * setInterval with cleanup
@@ -11,7 +12,7 @@ import { onCleanup, onMount } from "solid-js";
  */
 export const useInterval = (ms: number, callback: () => void) => {
     let timer: number | undefined;
-    onMount(() => {
+    onClient(() => {
         timer = setInterval(callback, ms);
         onCleanup(() => clearInterval(timer));
     });
@@ -52,7 +53,7 @@ export const useFrameInterval = (callback: (timestamp: number) => void) => {
         callback(timestamp);
         frameId = requestAnimationFrame(tick);
     };
-    onMount(() => {
+    onClient(() => {
         frameId = requestAnimationFrame(tick);
         onCleanup(() => cancelAnimationFrame(frameId));
     });
