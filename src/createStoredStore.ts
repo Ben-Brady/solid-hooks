@@ -1,20 +1,18 @@
 import { createStore, unwrap, type SetStoreFunction, type Store } from "solid-js/store";
 import { createDeferedCallback, eatErrors } from "./shared.js";
+import { onClient } from "./onClient.js";
 
 export const createSavedStore = <T extends object = {}>(
     key: string,
     defaultValue: T,
 ): [store: Store<T>, setStore: SetStoreFunction<T>] => {
-    let storedValue: T | undefined;
-    eatErrors(() => {
-        let storedString = localStorage.getItem(key);
-        if (storedString) {
-            storedValue = JSON.parse(storedString);
-        }
+    let [store, setStore] = createStore<T>(defaultValue, { name: key });
+    onClient(() => {
+        eatErrors(() => {
+            let storedString = localStorage.getItem(key);
+            if (storedString) setStore(JSON.parse(storedString));
+        });
     });
-
-    let initial = storedValue ?? defaultValue;
-    let [store, setStore] = createStore<T>(initial, { name: key });
 
     let setter: SetStoreFunction<T> = (...args: any[]) => {
         //@ts-expect-error, no types to avoid recursive type
@@ -33,16 +31,13 @@ export const createDeferedSavedStore = <T extends object = {}>(
     defaultValue: T,
     ms: number = 200,
 ): [store: Store<T>, setStore: SetStoreFunction<T>] => {
-    let storedValue: T | undefined;
-    eatErrors(() => {
-        let storedString = localStorage.getItem(key);
-        if (storedString) {
-            storedValue = JSON.parse(storedString);
-        }
+    let [store, setStore] = createStore<T>(defaultValue, { name: key });
+    onClient(() => {
+        eatErrors(() => {
+            let storedString = localStorage.getItem(key);
+            if (storedString) setStore(JSON.parse(storedString));
+        });
     });
-
-    let initial = storedValue ?? defaultValue;
-    let [store, setStore] = createStore<T>(initial, { name: key });
 
     let defered = createDeferedCallback(ms);
     let setter: SetStoreFunction<T> = (...args: any[]) => {
@@ -72,33 +67,30 @@ export const createDeferedSavedStore = <T extends object = {}>(
  * const [counter, setCounter] = createBigintStoredSignal("counter", 0n)
  * ```
  */
-export const createCustomStoredStore = (options: {
-    storage?: Storage;
-    ratelimit?: number;
-    serialise?: (value: any) => string;
-    deserialise?: (value: string) => any;
-}): (<T extends object = {}>(
-    key: string,
-    defaultValue: T,
-) => [store: Store<T>, setStore: SetStoreFunction<T>]) => {
-    let storage = options.storage ?? localStorage;
-    let serialise = options.serialise ?? JSON.stringify;
-    let deserialise = options.deserialise ?? JSON.parse;
+export const createCustomStoredStore =
+    (options: {
+        storage?: Storage;
+        ratelimit?: number;
+        serialise?: (value: any) => string;
+        deserialise?: (value: string) => any;
+    }): (<T extends object = {}>(
+        key: string,
+        defaultValue: T,
+    ) => [store: Store<T>, setStore: SetStoreFunction<T>]) =>
+    <T extends object = {}>(key: string, defaultValue: T) => {
+        let serialise = options.serialise ?? JSON.stringify;
+        let deserialise = options.deserialise ?? JSON.parse;
+        let storage = options.storage ?? localStorage;
 
-    return <T extends object = {}>(key: string, defaultValue: T) => {
-        let storedValue: T | undefined;
-
-        eatErrors(() => {
-            let storedString = storage.getItem(key);
-            if (storedString) {
-                storedValue = deserialise(storedString);
-            }
+        let [store, setStore] = createStore<T>(defaultValue, { name: key });
+        onClient(() => {
+            eatErrors(() => {
+                let storedString = storage.getItem(key);
+                if (storedString) setStore(deserialise(storedString));
+            });
         });
 
-        let initial = storedValue ?? defaultValue;
-        let [store, setStore] = createStore<T>(initial, { name: key });
         let defered = createDeferedCallback(options.ratelimit);
-
         let setter: SetStoreFunction<T> = (...args: any[]) => {
             //@ts-expect-error, no types to avoid recursive type
             setStore(...args);
@@ -109,6 +101,6 @@ export const createCustomStoredStore = (options: {
                 });
             });
         };
+
         return [store, setter] as const;
     };
-};

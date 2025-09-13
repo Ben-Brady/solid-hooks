@@ -1,5 +1,6 @@
 import { createSignal, type Accessor, type Setter } from "solid-js";
 import { createDeferedCallback, eatErrors } from "./shared.js";
+import { onClient } from "./onClient.js";
 
 /**
  * createSignal with JSON serialising the value to localStorage
@@ -12,15 +13,13 @@ export const createStoredSignal = <T>(
     key: string,
     defaultValue: T,
 ): [state: Accessor<T>, setState: Setter<T>] => {
-    let storedValue: T | undefined;
-
-    eatErrors(() => {
-        let storedString = localStorage.getItem(key);
-        if (storedString) {
-            storedValue = JSON.parse(storedString);
-        }
+    let [value, setValue] = createSignal<T>(defaultValue, { name: key });
+    onClient(() => {
+        eatErrors(() => {
+            let storedString = localStorage.getItem(key);
+            if (storedString) setValue(JSON.parse(storedString));
+        });
     });
-    let [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
 
     let setter: Setter<T> = (...args) => {
         //@ts-ignore
@@ -46,15 +45,13 @@ export const createDeferedStoredSignal = <T>(
     defaultValue: T,
     ms: number = 200,
 ): [state: Accessor<T>, setState: Setter<T>] => {
-    let storedValue: T | undefined;
-
-    eatErrors(() => {
-        let storedString = localStorage.getItem(key);
-        if (storedString) {
-            storedValue = JSON.parse(storedString);
-        }
+    let [value, setValue] = createSignal<T>(defaultValue, { name: key });
+    onClient(() => {
+        eatErrors(() => {
+            let storedString = localStorage.getItem(key);
+            if (storedString) setValue(JSON.parse(storedString));
+        });
     });
-    let [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
 
     let defered = createDeferedCallback(ms);
     let setter: Setter<T> = (...args) => {
@@ -80,26 +77,25 @@ export const createDeferedStoredSignal = <T>(
  * const [counter, setCounter] = createBigintStoredSignal("counter", 0n)
  * ```
  */
-export const createCustomStoredSignal = (options: {
-    storage?: Storage;
-    ratelimit?: number;
-    serialise?: (value: any) => string;
-    deserialise?: (value: string) => any;
-}): (<T>(key: string, defaultValue: T) => [state: Accessor<T>, setState: Setter<T>]) => {
-    let storage = options.storage ?? localStorage;
-    let serialise = options.serialise ?? JSON.stringify;
-    let deserialise = options.deserialise ?? JSON.parse;
+export const createCustomStoredSignal =
+    (options: {
+        storage?: Storage;
+        ratelimit?: number;
+        serialise?: (value: any) => string;
+        deserialise?: (value: string) => any;
+    }): (<T>(key: string, defaultValue: T) => [state: Accessor<T>, setState: Setter<T>]) =>
+    <T extends any>(key: string, defaultValue: T) => {
+        let serialise = options.serialise ?? JSON.stringify;
+        let deserialise = options.deserialise ?? JSON.parse;
+        let storage = options.storage ?? localStorage;
 
-    return <T extends any>(key: string, defaultValue: T) => {
-        let storedValue: T | undefined;
-
-        eatErrors(() => {
-            let storedString = storage.getItem(key);
-            if (storedString) {
-                storedValue = deserialise(storedString);
-            }
+        let [value, setValue] = createSignal<T>(defaultValue, { name: key });
+        onClient(() => {
+            eatErrors(() => {
+                let storedString = storage.getItem(key);
+                if (storedString) setValue(deserialise(storedString));
+            });
         });
-        let [value, setValue] = createSignal<T>(storedValue ?? defaultValue, { name: key });
 
         let defered = createDeferedCallback(options.ratelimit);
         let setter: Setter<T> = (...args) => {
@@ -111,4 +107,3 @@ export const createCustomStoredSignal = (options: {
 
         return [value, setter] as const;
     };
-};
