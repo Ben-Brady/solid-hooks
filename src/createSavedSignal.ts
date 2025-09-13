@@ -1,5 +1,5 @@
 import { createSignal, type Accessor, type Setter } from "solid-js";
-import { createDeferedCallback, eatErrors } from "./shared.js";
+import { createDeferedCallback, eatErrors, isClient } from "./shared.js";
 import { onClient } from "./onClient.js";
 
 /**
@@ -9,7 +9,7 @@ import { onClient } from "./onClient.js";
  * const [volume, setVolume] = createStoredSignal("player-volume", 0)
  * ```
  */
-export const createStoredSignal = <T>(
+export const createSavedSignal = <T>(
     key: string,
     defaultValue: T,
 ): [state: Accessor<T>, setState: Setter<T>] => {
@@ -25,7 +25,7 @@ export const createStoredSignal = <T>(
         //@ts-ignore
         let newValue = setValue(...args);
         eatErrors(() => {
-            globalThis?.localStorage?.setItem?.(key, JSON.stringify(newValue));
+            if (isClient) localStorage.setItem(key, JSON.stringify(newValue));
         });
         return newValue;
     };
@@ -42,7 +42,7 @@ export const createStoredSignal = <T>(
  * const [volume, setVolume] = createStoredSignal("player-volume", 0)
  * ```
  */
-export const createDeferedStoredSignal = <T>(
+export const createDeferedSavedSignal = <T>(
     key: string,
     defaultValue: T,
     ratelimit: number = 200,
@@ -61,7 +61,7 @@ export const createDeferedStoredSignal = <T>(
         let newValue = setValue(...args);
         defered(() => {
             eatErrors(() => {
-                globalThis?.localStorage?.setItem?.(key, JSON.stringify(newValue));
+                if (isClient) localStorage.setItem(key, JSON.stringify(newValue));
             });
         });
         return newValue;
@@ -83,7 +83,7 @@ export const createDeferedStoredSignal = <T>(
  * const [counter, setCounter] = createBigintStoredSignal("counter", 0n)
  * ```
  */
-export const createCustomStoredSignal =
+export const createCustomSavedSignal =
     (options: {
         storage?: Storage;
         ratelimit?: number;
@@ -109,7 +109,7 @@ export const createCustomStoredSignal =
             let newValue = setValue(...args);
             defered(() => {
                 eatErrors(() => {
-                    globalThis?.localStorage?.setItem?.(key, serialise(newValue));
+                    if (isClient) localStorage.setItem(key, serialise(newValue));
                 });
             });
             return newValue;

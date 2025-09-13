@@ -1,4 +1,4 @@
-export let eatErrors = (callback: () => void) => {
+export const eatErrors = (callback: () => void) => {
     try {
         callback();
     } catch (e) {
@@ -6,18 +6,22 @@ export let eatErrors = (callback: () => void) => {
     }
 };
 
-export let createDeferedCallback = (ms: number | undefined) => {
+export const createDeferedCallback = (ms: number | undefined) => {
     let timeout: number | undefined;
-    let action: (() => void) | undefined;
+    let action: () => void = voidFunc;
 
     return (callback: () => void) => {
         if (!ms) return callback();
         if (!timeout) {
             timeout = setTimeout(() => {
-                action?.();
+                action();
                 timeout = undefined;
             }, ms);
         }
         action = callback;
     };
 };
+
+export const isClient = typeof window < "u";
+console.log({ isClient });
+export const voidFunc: (...args: any[]) => void = () => {};

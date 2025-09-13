@@ -1,4 +1,4 @@
-import { onMount } from "solid-js";
+import { isClient } from "./shared.js";
 
 /**
  * if is browser, just run the callback
@@ -7,5 +7,7 @@ import { onMount } from "solid-js";
  *
  * This is designed to prevent unncessary jitter for components rendered on the client
  */
-export const onClient = (callback: () => void) =>
-    typeof window !== "undefined" ? callback() : onMount(callback);
+// export const onClient = (callback: () => void) =>
+//     typeof window !== "undefined" ? callback() : onMount(callback);
+
+export const onClient = (callback: () => void) => isClient && callback();

@@ -1,5 +1,5 @@
 import { createStore, unwrap, type SetStoreFunction, type Store } from "solid-js/store";
-import { createDeferedCallback, eatErrors } from "./shared.js";
+import { createDeferedCallback, eatErrors, isClient } from "./shared.js";
 import { onClient } from "./onClient.js";
 
 export const createSavedStore = <T extends object = {}>(
@@ -19,7 +19,7 @@ export const createSavedStore = <T extends object = {}>(
         setStore(...args);
 
         eatErrors(() => {
-            globalThis?.localStorage?.setItem?.(key, JSON.stringify(unwrap(store)));
+            if (isClient) localStorage.setItem(key, JSON.stringify(unwrap(store)));
         });
     };
 
@@ -46,7 +46,7 @@ export const createDeferedSavedStore = <T extends object = {}>(
 
         defered(() => {
             eatErrors(() => {
-                globalThis?.localStorage?.setItem?.(key, JSON.stringify(unwrap(store)));
+                if (isClient) localStorage.setItem(key, JSON.stringify(unwrap(store)));
             });
         });
     };
@@ -67,7 +67,7 @@ export const createDeferedSavedStore = <T extends object = {}>(
  * const [counter, setCounter] = createBigintStoredSignal("counter", 0n)
  * ```
  */
-export const createCustomStoredStore =
+export const createCustomSavedStore =
     (options: {
         storage?: Storage;
         ratelimit?: number;
@@ -97,7 +97,7 @@ export const createCustomStoredStore =
 
             defered(() => {
                 eatErrors(() => {
-                    globalThis?.localStorage?.setItem?.(key, serialise(unwrap(store)));
+                    if (isClient) storage.setItem(key, serialise(unwrap(store)));
                 });
             });
         };

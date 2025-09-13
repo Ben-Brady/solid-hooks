@@ -1,17 +1,17 @@
 export { useViewportSize, useViewportHeight, useViewportWidth } from "./useViewport.js";
 export { useAbortSignal } from "./useAbortSignal.js";
-export { onClient } from "./onClient.js";
+export { onClient as onClient } from "./onClient.js";
 export { useIsClient } from "./useIsClient.js";
 export {
-    createStoredSignal,
-    createDeferedStoredSignal,
-    createCustomStoredSignal,
-} from "./createStoredSignal.js";
+    createSavedSignal,
+    createDeferedSavedSignal,
+    createCustomSavedSignal,
+} from "./createSavedSignal.js";
 export {
     createSavedStore,
     createDeferedSavedStore,
-    createCustomStoredStore,
-} from "./createStoredStore.js";
+    createCustomSavedStore,
+} from "./createSavedStore.js";
 export {
     useDeltaFrameInterval,
     useDeltaInterval,

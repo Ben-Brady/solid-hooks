@@ -48,7 +48,7 @@ export const useDeltaInterval = (ms: number, callback: (deltaTime: number) => vo
  */
 export const useFrameInterval = (callback: (timestamp: number) => void) => {
     let frameId: number;
-    let tick = (timestamp: number) => {
+    const tick = (timestamp: number) => {
         callback(timestamp);
         frameId = requestAnimationFrame(tick);
     };
