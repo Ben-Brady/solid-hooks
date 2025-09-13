@@ -19,7 +19,7 @@ export const createSavedStore = <T extends object = {}>(
         setStore(...args);
 
         eatErrors(() => {
-            localStorage.setItem(key, JSON.stringify(unwrap(store)));
+            globalThis?.localStorage?.setItem?.(key, JSON.stringify(unwrap(store)));
         });
     };
 
@@ -46,7 +46,7 @@ export const createDeferedSavedStore = <T extends object = {}>(
 
         defered(() => {
             eatErrors(() => {
-                localStorage.setItem(key, JSON.stringify(unwrap(store)));
+                globalThis?.localStorage?.setItem?.(key, JSON.stringify(unwrap(store)));
             });
         });
     };
@@ -97,7 +97,7 @@ export const createCustomStoredStore =
 
             defered(() => {
                 eatErrors(() => {
-                    storage.setItem(key, serialise(unwrap(store)));
+                    globalThis?.localStorage?.setItem?.(key, serialise(unwrap(store)));
                 });
             });
         };

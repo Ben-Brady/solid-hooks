@@ -24,7 +24,9 @@ export const createStoredSignal = <T>(
     let setter: Setter<T> = (...args) => {
         //@ts-ignore
         let newValue = setValue(...args);
-        eatErrors(() => localStorage.setItem(key, JSON.stringify(newValue)));
+        eatErrors(() => {
+            globalThis?.localStorage?.setItem?.(key, JSON.stringify(newValue));
+        });
         return newValue;
     };
 
@@ -43,7 +45,7 @@ export const createStoredSignal = <T>(
 export const createDeferedStoredSignal = <T>(
     key: string,
     defaultValue: T,
-    ms: number = 200,
+    ratelimit: number = 200,
 ): [state: Accessor<T>, setState: Setter<T>] => {
     let [value, setValue] = createSignal<T>(defaultValue, { name: key });
     onClient(() => {
@@ -53,11 +55,15 @@ export const createDeferedStoredSignal = <T>(
         });
     });
 
-    let defered = createDeferedCallback(ms);
+    let defered = createDeferedCallback(ratelimit);
     let setter: Setter<T> = (...args) => {
         //@ts-ignore
         let newValue = setValue(...args);
-        defered(() => eatErrors(() => localStorage.setItem(key, JSON.stringify(newValue))));
+        defered(() => {
+            eatErrors(() => {
+                globalThis?.localStorage?.setItem?.(key, JSON.stringify(newValue));
+            });
+        });
         return newValue;
     };
 
@@ -101,7 +107,11 @@ export const createCustomStoredSignal =
         let setter: Setter<T> = (...args) => {
             //@ts-ignore
             let newValue = setValue(...args);
-            defered(() => eatErrors(() => storage.setItem(key, serialise(newValue))));
+            defered(() => {
+                eatErrors(() => {
+                    globalThis?.localStorage?.setItem?.(key, serialise(newValue));
+                });
+            });
             return newValue;
         };
 
