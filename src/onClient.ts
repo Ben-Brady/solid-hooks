@@ -1,11 +1,9 @@
 import { isClient } from "./shared.js";
 
 /**
- * if is browser, just run the callback
+ * run code on client, run immmediatly if rendering on the client
  *
- * if on server, use `onMount` to only run on client
- *
- * This is designed to prevent unncessary jitter for components rendered on the client
+ * This is designed to prevent unncessary jitter for components that rely on browser data
  */
 // export const onClient = (callback: () => void) =>
 //     typeof window !== "undefined" ? callback() : onMount(callback);
