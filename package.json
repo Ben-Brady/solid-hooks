@@ -8,6 +8,13 @@
     "type": "git",
     "url": "git+https://github.com/Ben-Brady/solid-hooks.git"
   },
+
+  "scripts": {
+    "build": "tsc",
+    "publish": "npm publish --access=public",
+    "benchmark": "microbundle"
+  },
+
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -38,11 +45,8 @@
     "./dist/*.js",
     "./dist/*.jsx"
   ],
-  "scripts": {
-    "build": "tsc",
-    "publish": "npm publish --access=public"
-  },
   "devDependencies": {
+    "microbundle": "^0.15.1",
     "typescript": "~5.8.3"
   },
   "peerDependencies": {
