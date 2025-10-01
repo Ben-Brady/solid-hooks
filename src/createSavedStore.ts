@@ -6,24 +6,25 @@ export const createSavedStore = <T extends object = {}>(
     key: string,
     defaultValue: T,
 ): [store: Store<T>, setStore: SetStoreFunction<T>] => {
-    let [store, setStore] = createStore<T>(defaultValue, { name: key });
+    let [value, setValue] = createStore<T>(defaultValue, { name: key });
     onClient(() => {
         eatErrors(() => {
             let storedString = localStorage.getItem(key);
-            if (storedString) setStore(JSON.parse(storedString));
+            if (storedString) setValue(JSON.parse(storedString));
         });
     });
 
     let setter: SetStoreFunction<T> = (...args: any[]) => {
         //@ts-expect-error, no types to avoid recursive type
-        setStore(...args);
+        let newValue = setValue(...args);
 
         eatErrors(() => {
-            if (isClient) localStorage.setItem(key, JSON.stringify(unwrap(store)));
+            if (isClient) localStorage.setItem(key, JSON.stringify(unwrap(value)));
         });
+        return newValue;
     };
 
-    return [store, setter] as const;
+    return [value, setter] as const;
 };
 
 export const createDeferedSavedStore = <T extends object = {}>(
@@ -42,13 +43,14 @@ export const createDeferedSavedStore = <T extends object = {}>(
     let defered = createDeferedCallback(ms);
     let setter: SetStoreFunction<T> = (...args: any[]) => {
         //@ts-expect-error, no types to avoid recursive type
-        setStore(...args);
+        let newValue = setStore(...args);
 
         defered(() => {
             eatErrors(() => {
                 if (isClient) localStorage.setItem(key, JSON.stringify(unwrap(store)));
             });
         });
+        return newValue;
     };
 
     return [store, setter] as const;
@@ -93,13 +95,14 @@ export const createCustomSavedStore =
         let defered = createDeferedCallback(options.ratelimit);
         let setter: SetStoreFunction<T> = (...args: any[]) => {
             //@ts-expect-error, no types to avoid recursive type
-            setStore(...args);
+            let newValue = setStore(...args);
 
             defered(() => {
                 eatErrors(() => {
                     if (isClient) storage.setItem(key, serialise(unwrap(store)));
                 });
             });
+            return newValue;
         };
 
         return [store, setter] as const;
