@@ -1,4 +1,4 @@
-export { useViewportSize, useViewportHeight, useViewportWidth } from "./useViewport.js";
+export { useViewportSize, useElementSize } from "./useSize.js";
 export { useAbortSignal } from "./useAbortSignal.js";
 export { onClient as onClient } from "./onClient.js";
 export { useIsClient } from "./useIsClient.js";
