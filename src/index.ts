@@ -2,6 +2,7 @@ export { useViewportSize, useElementSize } from "./useSize.js";
 export { useAbortSignal } from "./useAbortSignal.js";
 export { onClient as onClient } from "./onClient.js";
 export { useIsClient } from "./useIsClient.js";
+export { useCSS } from "./useCSS.js";
 export {
     createSavedSignal,
     createDeferedSavedSignal,
