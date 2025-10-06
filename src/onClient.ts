@@ -7,5 +7,4 @@ import { isClient } from "./shared.js";
  */
 // export const onClient = (callback: () => void) =>
 //     typeof window !== "undefined" ? callback() : onMount(callback);
-
 export const onClient = (callback: () => void) => isClient && callback();
