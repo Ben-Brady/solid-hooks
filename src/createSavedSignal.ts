@@ -109,7 +109,7 @@ export const createCustomSavedSignal =
             let newValue = setValue(...args);
             defered(() => {
                 eatErrors(() => {
-                    if (isClient) localStorage.setItem(key, serialise(newValue));
+                    if (isClient) storage.setItem(key, serialise(newValue));
                 });
             });
             return newValue;
